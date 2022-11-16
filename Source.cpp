@@ -16,40 +16,35 @@ class ExampleLogHandler : public crow::ILogHandler {
 int main() {
   crow::SimpleApp app;
 
-  CROW_ROUTE(app, "/")
-      .name("hello")([] {
-        return "Hello World!";
-      });
-
-  // simple json response
-  CROW_ROUTE(app, "/json")
-  ([] {
+  /**
+   * @brief
+   * @param element string
+   * @param base_attack int
+   * @param crit_damage double
+   * @param damage_bonus_elemental int
+   * @param damage_bonus_all double
+   * @param flat_attack int
+   * @param flat_attack int
+   * @param flat_attack int
+   * @param flat_attack int
+   * @param flat_attack int
+   * @param flat_attack int
+   * @param flat_attack int
+   *
+   */
+  CROW_ROUTE(app, "/optimize")
+  ([](const crow::request& req) {
     crow::json::wvalue responseBody;
+    crow::json::rvalue requestBody = crow::json::load(req.body);
 
-    Character Tartaglia(HYDRO);
-    Tartaglia.setStat(BASE_ATK, 301 + 542);
-    Tartaglia.setStat(CRIT_DAMAGE, 0.5 + 0.882);  // from weapon
-
-    double weaponDMGBonus = 0.4;
-    double ascensionDMGBonus = 0.288;
-    double dmgBonusBuff = 0.838;
-    double bonusAtkPercent = 1.08 + 0.14;
-
-    Tartaglia.setStat(FLAT_ATK, 1491);
-    Tartaglia.setStat(ATK_PERCENT, bonusAtkPercent);
-    Tartaglia.setStat(ELEMENTAL_MASTERY, 567 + 180);
-    Tartaglia.setStat(MELT_BONUS, .15);
-
-    Tartaglia.setTalentDetails(BURST, "total_attack", 9.86);
-
-    Tartaglia.setDamageBonus(HYDRO, ascensionDMGBonus + dmgBonusBuff);
-    Tartaglia.setDamageBonus(ALL, weaponDMGBonus + 0.6);
+    Character character = Initial::characterFromRequest(requestBody);
 
     Enemy enemy(PYRO);
+
     enemy.setLevel(90);
     enemy.setResistance(HYDRO, 0.3 - 0.4 - 1.7);
 
-    Character best = Optimize::optimize(Tartaglia, enemy);
+    Character best = Optimize::optimize(character, enemy);
     responseBody = best.toJSON();
     responseBody["damageOutput"] = Calculator::damageOutput(best, enemy);
 

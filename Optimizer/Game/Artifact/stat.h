@@ -48,10 +48,7 @@ class Stat {
     return *this;
   }
 
-  ~Stat() {
-    label_ = "";
-    value_ = 0;
-  }
+  ~Stat() = default;
 
   // simulate roll
   void addRolls(int rolls) {
