@@ -53,8 +53,7 @@ class Artifact {
     return *this;
   }
 
-  ~Artifact() {
-  }
+  ~Artifact() = default;
 
   int size() const {
     return SUBSTAT_COUNT;

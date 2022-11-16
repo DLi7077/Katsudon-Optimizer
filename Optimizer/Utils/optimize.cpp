@@ -14,11 +14,11 @@ Character optimize(Character& character, Enemy& enemy) {
   std::cout << "Circlet Artifacts:\t" << Initial::CircletArtifacts.size() << "\n\n";
 
   std::vector<std::vector<Artifact>> artifactSets = {
-      std::move(Initial::FlowerArtifacts),
-      std::move(Initial::FeatherArtifacts),
-      std::move(Initial::SandsArtifacts),
-      std::move(Initial::GobletArtifacts),
-      std::move(Initial::CircletArtifacts),
+      Initial::FlowerArtifacts,
+      Initial::FeatherArtifacts,
+      Initial::SandsArtifacts,
+      Initial::GobletArtifacts,
+      Initial::CircletArtifacts,
   };
 
   // permit to refer to variables in external scope
