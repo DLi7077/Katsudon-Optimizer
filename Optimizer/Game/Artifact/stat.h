@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Constants/constants.h"
 #include "../../Constants/pch.h"
+#include "crow.h"
 
 class Stat {
  public:
@@ -74,6 +75,14 @@ class Stat {
   friend std::ostream& operator<<(std::ostream& out, const Stat& rhs) {
     std::cout << rhs.label_ << " " << rhs.value_ << "\n";
     return out;
+  }
+
+  crow::json::wvalue toJSON() {
+    crow::json::wvalue statJson;
+    statJson["label"] = label_;
+    statJson["value"] = value_;
+
+    return statJson;
   }
 
  private:

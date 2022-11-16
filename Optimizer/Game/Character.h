@@ -1,7 +1,8 @@
 #pragma once
-#include "./Artifact/artifact.h"
 #include "../Constants/constants.h"
 #include "../Constants/pch.h"
+#include "./Artifact/artifact.h"
+#include "crow.h"
 
 #define CHARACTER_LEVEL "level"
 #define SKILL "Elemental Skill"
@@ -317,5 +318,39 @@ class Character {
     out << std::string(30, '-') << "\n";
 
     return out;
+  }
+
+  crow::json::wvalue toJSON() {
+    crow::json::wvalue characterJson;
+
+    // character stats
+    characterJson["Character Level"] = character_level_;
+    characterJson["Base FLAT_ATK"] = stats_[BASE_ATK];
+    characterJson["ATK"] = final_stats_["total_attack"];
+    characterJson["MAX HP"] = final_stats_["total_hp"];
+    characterJson["DEF"] = final_stats_["total_defense"];
+    characterJson["Elemental Mastery"] = final_stats_["elemental_mastery"];
+    characterJson["Energy Recharge"] = final_stats_["energy_recharge"];
+    characterJson["Crit Rate"] = final_stats_["crit_rate"];
+    characterJson["Crit Damage"] = final_stats_["crit_damage"];
+    characterJson["Anemo DMG Bonus"] = final_stats_["damage_bonus_anemo"];
+    characterJson["Cryo DMG Bonus "] = final_stats_["damage_bonus_cryo"];
+    characterJson["Dendro DMG Bonus"] = final_stats_["damage_bonus_dendro"];
+    characterJson["Electro DMG Bonus"] = final_stats_["damage_bonus_electro"];
+    characterJson["Hydro DMG Bonus"] = final_stats_["damage_bonus_hydro"];
+    characterJson["Pyro DMG Bonus "] = final_stats_["damage_bonus_pyro"];
+    characterJson["Physical DMG Bonus"] = final_stats_["damage_bonus_physical"];
+    characterJson["Other DMG Bonus"] = final_stats_["damage_bonus_all"];
+
+    // character artifacts
+    std::vector<crow::json::wvalue> artifactsJson;
+
+    for (Artifact& artifact : artifact_set_) {
+      artifactsJson.push_back(artifact.toJSON());
+    }
+
+    characterJson["artifacts"] = std::move(artifactsJson);
+
+    return characterJson;
   }
 };

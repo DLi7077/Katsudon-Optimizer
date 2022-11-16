@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "./Optimizer/Utils/optimize.cpp"
 #include "crow.h"
 
 class ExampleLogHandler : public crow::ILogHandler {
@@ -24,30 +25,39 @@ int main() {
   CROW_ROUTE(app, "/json")
   ([] {
     crow::json::wvalue responseBody;
-    // point to array
-    std::vector<std::string> stuff = {"Hello", "World"};
-    responseBody["message"] = stuff;
 
-    crow::json::wvalue wordDistribution;
-    wordDistribution["obama"] = 3;
-    wordDistribution["trump"] = 3;
-    wordDistribution["donald"] = 3;
+    Character Tartaglia(HYDRO);
+    Tartaglia.setStat(BASE_ATK, 301 + 542);
+    Tartaglia.setStat(CRIT_DAMAGE, 0.5 + 0.882);  // from weapon
 
-    // nested json
-    crow::json::wvalue rCopy(wordDistribution);
-    crow::json::wvalue r(wordDistribution);
-    responseBody["test"] = std::move(rCopy);
+    double weaponDMGBonus = 0.4;
+    double ascensionDMGBonus = 0.288;
+    double dmgBonusBuff = 0.838;
+    double bonusAtkPercent = 1.08 + 0.14;
 
-    // array of jsons
+    Tartaglia.setStat(FLAT_ATK, 1491);
+    Tartaglia.setStat(ATK_PERCENT, bonusAtkPercent);
+    Tartaglia.setStat(ELEMENTAL_MASTERY, 567 + 180);
+    Tartaglia.setStat(MELT_BONUS, .15);
 
-    std::vector<crow::json::wvalue> copyarray = {r, r, r};
-    responseBody["x"] = std::move(copyarray);
+    Tartaglia.setTalentDetails(BURST, "total_attack", 9.86);
+
+    Tartaglia.setDamageBonus(HYDRO, ascensionDMGBonus + dmgBonusBuff);
+    Tartaglia.setDamageBonus(ALL, weaponDMGBonus + 0.6);
+
+    Enemy enemy(PYRO);
+    enemy.setLevel(90);
+    enemy.setResistance(HYDRO, 0.3 - 0.4 - 1.7);
+
+    Character best = Optimize::optimize(Tartaglia, enemy);
+    responseBody = best.toJSON();
+    responseBody["damageOutput"] = Calculator::damageOutput(best, enemy);
 
     return responseBody;
   });
 
   CROW_ROUTE(app, "/hello/<int>")
-  ([](int count) {  
+  ([](int count) {
     if (count > 100)
       return crow::response(400);
     std::ostringstream os;
