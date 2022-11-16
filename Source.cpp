@@ -3,6 +3,7 @@
 #include <string>
 #include <vector>
 
+#include "./Katsudon/katsudon.h"
 #include "./Optimizer/Utils/optimize.cpp"
 #include "crow.h"
 
@@ -37,12 +38,10 @@ int main() {
     crow::json::wvalue responseBody;
     crow::json::rvalue requestBody = crow::json::load(req.body);
 
-    Character character = Initial::characterFromRequest(requestBody);
+    Katsudon payload(requestBody);
 
-    Enemy enemy(PYRO);
-
-    enemy.setLevel(90);
-    enemy.setResistance(HYDRO, 0.3 - 0.4 - 1.7);
+    Character character = payload.constructCharacter();
+    Enemy enemy = payload.constructEnemy();
 
     Character best = Optimize::optimize(character, enemy);
     responseBody = best.toJSON();
