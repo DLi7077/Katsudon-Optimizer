@@ -62,20 +62,28 @@ class Katsudon {
     return enemy;
   }
 
-  int getInt(std::string &&key) {
+  bool hasKey(std::string key) {
+    return request_body_.has(key);
+  }
+
+  int getInt(std::string key) {
+    if (!hasKey(key)) return 0;
     return request_body_[key].i();
   }
 
-  double getDouble(std::string &&key) {
+  double getDouble(std::string key) {
+    if (!hasKey(key)) return 0;
     return request_body_[key].d();
   }
 
-  std::string getString(std::string &&key) {
+  std::string getString(std::string key) {
+    if (!hasKey(key)) return "";
     return request_body_[key].s();
   }
 
   // integer list
-  std::vector<int> getIntVector(std::string &&key) {
+  std::vector<int> getIntVector(std::string key) {
+    if (!hasKey(key)) return {};
     auto crowList = request_body_[key];
     int list_size = crowList.lo().size();
 
@@ -88,7 +96,9 @@ class Katsudon {
   }
 
   // double list
-  std::vector<double> getDoubleVector(std::string &&key) {
+  std::vector<double> getDoubleVector(std::string key) {
+    if (!hasKey(key)) return {};
+
     auto crowList = request_body_[key];
     int list_size = crowList.lo().size();
 
@@ -101,7 +111,9 @@ class Katsudon {
   }
 
   // string list
-  std::vector<std::string> getStringVector(std::string &&key) {
+  std::vector<std::string> getStringVector(std::string key) {
+    if (!hasKey(key)) return {};
+
     auto crowList = request_body_[key];
     int list_size = crowList.lo().size();
 

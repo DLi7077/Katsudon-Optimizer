@@ -4,37 +4,6 @@
 #include "./generate.h"
 
 namespace Initial {
-// Character characterFromRequest(crow::json::rvalue &requestBody) {
-//   Katsudon payload(requestBody);
-
-//   std::string element = payload.getString("element");
-//   double base_attack = payload.getDouble("base_attack");        // 843
-//   double crit_damage = payload.getDouble("crit_damage");        // 1.382
-//   double flat_attack = payload.getDouble("flat_attack");        // 1491
-//   double attack_percent = payload.getDouble("attack_percent");  // 1.22
-
-//   double damage_bonus_elemental = payload.getDouble("damage_bonus_elemental");  // 1.126
-//   double damage_bonus_all = payload.getDouble("damage_bonus_all");              // 1.00
-
-//   std::string talent_stat = payload.getString("talent_stat");   // "total_attack"
-//   double talent_percent = payload.getDouble("talent_percent");  // 9.86
-
-//   Character character(element);
-//   character.setStat(BASE_ATK, base_attack);
-//   character.setStat(CRIT_DAMAGE, crit_damage);
-
-//   character.setStat(FLAT_ATK, flat_attack);
-//   character.setStat(ATK_PERCENT, attack_percent);
-//   character.setStat(ELEMENTAL_MASTERY, 567 + 180);
-//   character.setStat(MELT_BONUS, .15);
-
-//   character.setTalentDetails(BURST, talent_stat, talent_percent);
-
-//   character.setDamageBonus(HYDRO, damage_bonus_elemental);
-//   character.setDamageBonus(ALL, damage_bonus_all);
-  
-//   return character;
-// }
 
 vector<string> subStatPreference = {
     FLAT_ATK,
