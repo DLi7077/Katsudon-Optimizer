@@ -1,6 +1,7 @@
 #pragma once
 #include "../../Constants/pch.h"
 #include "./stat.h"
+#include "crow.h"
 
 class Artifact {
  public:
@@ -79,6 +80,20 @@ class Artifact {
     }
     out << "\n";
     return out;
+  }
+
+  crow::json::wvalue toJSON() {
+    crow::json::wvalue artifactJson;
+    artifactJson["main_stat"] = main_stat_.toJSON();
+
+    std::vector<crow::json::wvalue> substatsJson;
+    for (int i = 0; i < SUBSTAT_COUNT; i++) {
+      substatsJson.push_back(substats_[i].toJSON());
+    }
+
+    artifactJson["substats"] = std::move(substatsJson);
+
+    return artifactJson;
   }
 
  private:
