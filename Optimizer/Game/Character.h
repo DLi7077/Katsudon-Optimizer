@@ -12,6 +12,7 @@
 #define DEFAULT_BASE_ATK 800
 #define DEFAULT_BASE_HP 10000
 #define DEFAULT_BASE_DEF 200
+#define DEFAULT_CRIT_DAMAGE .5
 
 #define SKILL_SCALING_DEFAULT 3.656
 #define BURST_SCALING_DEFAULT 3.026
@@ -43,7 +44,7 @@ class Character {
     stats_[ELEMENTAL_MASTERY] = 0;
     stats_[ENERGY_RECHARGE] = 1;
     stats_[CRIT_RATE] = .05;
-    stats_[CRIT_DAMAGE] = .5;
+    stats_[CRIT_DAMAGE] = DEFAULT_CRIT_DAMAGE;
     stats_[MELT_BONUS] = 0;
   }
 

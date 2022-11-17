@@ -19,10 +19,12 @@ class Katsudon {
   // construct Character from request body
   Character constructCharacter() {
     std::string element = getString("element");
-    double base_attack = getDouble("base_attack");        // 843
-    double crit_damage = getDouble("crit_damage");        // 1.382
-    double flat_attack = getDouble("flat_attack");        // 1491
-    double attack_percent = getDouble("attack_percent");  // 1.22
+    double base_attack = getDouble("base_attack");              // 843
+    double crit_damage = getDouble("crit_damage");              // .882
+    double flat_attack = getDouble("flat_attack");              // 1491
+    double attack_percent = getDouble("attack_percent");        // 1.22
+    double elemental_mastery = getDouble("elemental_mastery");  // 747
+    double energy_recharge = getDouble("energy_recharge");      // 0
 
     double damage_bonus_elemental = getDouble("damage_bonus_elemental");  // 1.126
     double damage_bonus_all = getDouble("damage_bonus_all");              // 1.00
@@ -32,11 +34,12 @@ class Katsudon {
 
     Character character(element);
     character.setStat(BASE_ATK, base_attack);
-    character.setStat(CRIT_DAMAGE, crit_damage);
+    character.setStat(CRIT_DAMAGE, DEFAULT_CRIT_DAMAGE + crit_damage);
 
     character.setStat(FLAT_ATK, flat_attack);
     character.setStat(ATK_PERCENT, attack_percent);
-    character.setStat(ELEMENTAL_MASTERY, 567 + 180);
+    character.setStat(ELEMENTAL_MASTERY, elemental_mastery);
+    character.setStat(ENERGY_RECHARGE, energy_recharge);
     character.setStat(MELT_BONUS, .15);
 
     character.setTalentDetails(BURST, talent_stat, talent_percent);
