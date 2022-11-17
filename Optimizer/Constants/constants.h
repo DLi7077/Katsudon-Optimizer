@@ -14,8 +14,8 @@
 #define ELECTRO_DAMAGE_BONUS "Electro DMG Bonus%"
 #define HYDRO_DAMAGE_BONUS "Hydro DMG Bonus%"
 #define PYRO_DAMAGE_BONUS "Pyro DMG Bonus%"
-#define PHYSICAL_DAMAGE_BONUS "Physical DMG Bonus"
-#define ALL_DAMAGE_BONUS "DMG Bonus"
+#define PHYSICAL_DAMAGE_BONUS "Physical DMG Bonus%"
+#define OTHER_DAMAGE_BONUS "Other DMG Bonus%"
 
 #define BASE_ATK "Base Attack"
 #define BASE_HP "Base HP"

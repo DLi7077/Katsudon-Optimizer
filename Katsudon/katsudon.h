@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../Optimizer/Constants/pch.h"
-#include "../Optimizer/Game/Character.h"
+#include "../Optimizer/Game/Character/Character.h"
 #include "../Optimizer/Game/Enemy.h"
 #include "crow.h"
 

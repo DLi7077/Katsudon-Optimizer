@@ -4,6 +4,8 @@
 #include <vector>
 
 #include "./Katsudon/katsudon.h"
+#include "./Optimizer/Constants/constants.h"
+#include "./Optimizer/Game/Character/Character.h"
 #include "./Optimizer/Utils/optimize.cpp"
 #include "crow.h"
 
@@ -41,6 +43,9 @@ int main() {
     Katsudon payload(requestBody);
 
     Character character = payload.constructCharacter();
+    Attributes::BonusStatGain fourEmblem("energy_recharge", OTHER_DAMAGE_BONUS, 0, 0.25, 0.75);
+    character.addBonusStatGain(fourEmblem);
+
     Enemy enemy = payload.constructEnemy();
 
     Character best = Optimize::optimize(character, enemy);

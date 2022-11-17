@@ -1,6 +1,6 @@
 #include "../Constants/constants.h"
 #include "../Game/DamageCalculator.cpp"
-#include "../Game/character.h"
+#include "../Game/Character/Character.h"
 #include "./initializer.cpp"
 
 namespace Optimize {
