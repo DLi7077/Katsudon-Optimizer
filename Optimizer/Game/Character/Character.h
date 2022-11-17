@@ -1,7 +1,8 @@
 #pragma once
-#include "../Constants/constants.h"
-#include "../Constants/pch.h"
-#include "./Artifact/artifact.h"
+#include "../../Constants/constants.h"
+#include "../../Constants/pch.h"
+#include "../Artifact/artifact.h"
+#include "./Attributes.h"
 
 #define CHARACTER_LEVEL "level"
 #define SKILL "Elemental Skill"
@@ -30,6 +31,8 @@ class Character {
   std::string damage_element_;
   TalentScalingStat scaling_stat_;
   TalentDMGPercent damage_scaling_;
+
+  std::vector<Attributes::BonusStatGain> bonus_stat_gains_;
 
   void InitCharacterStats() {
     stats_[BASE_ATK] = DEFAULT_BASE_ATK;
@@ -66,6 +69,7 @@ class Character {
     damage_scaling_[BURST] = BURST_SCALING_DEFAULT;
   }
 
+  // update final stats on stat change
   void updateStatModel() {
     final_stats_["total_attack"] = stats_[BASE_ATK] * (1 + stats_[ATK_PERCENT]) + stats_[FLAT_ATK];
     final_stats_["total_hp"] = stats_[BASE_HP] * (1 + stats_[HP_PERCENT]) + stats_[FLAT_HP];
@@ -101,6 +105,7 @@ class Character {
         "damage_bonus_hydro",
         "damage_bonus_pyro",
         "damage_bonus_physical",
+        "damage_bonus_all",
         MELT_BONUS,
     };
     for (const std::string& stat : validStats) {
@@ -118,10 +123,13 @@ class Character {
     if (label == HYDRO_DAMAGE_BONUS) return true;
     if (label == PYRO_DAMAGE_BONUS) return true;
     if (label == PHYSICAL_DAMAGE_BONUS) return true;
+    if (label == OTHER_DAMAGE_BONUS) return true;
 
     return false;
   }
 
+  // changes elemental_damage_bonus to the element
+  // if not damage bonus, returns the label
   std::string labelCastToElement(std::string& label) {
     if (label == ANEMO_DAMAGE_BONUS) return ANEMO;
     if (label == CRYO_DAMAGE_BONUS) return CRYO;
@@ -130,6 +138,7 @@ class Character {
     if (label == HYDRO_DAMAGE_BONUS) return HYDRO;
     if (label == PYRO_DAMAGE_BONUS) return PYRO;
     if (label == PHYSICAL_DAMAGE_BONUS) return PHYSICAL;
+    if (label == OTHER_DAMAGE_BONUS) return ALL;
 
     return label;
   }
@@ -163,6 +172,7 @@ class Character {
     damage_scaling_ = rhs.damage_scaling_;
     character_level_ = rhs.character_level_;
     artifact_set_ = rhs.artifact_set_;
+    bonus_stat_gains_ = rhs.bonus_stat_gains_;
 
     updateStatModel();
   }
@@ -187,6 +197,7 @@ class Character {
     damage_scaling_ = rhs.damage_scaling_;
     character_level_ = rhs.character_level_;
     artifact_set_ = rhs.artifact_set_;
+    bonus_stat_gains_ = rhs.bonus_stat_gains_;
 
     updateStatModel();
   }
@@ -202,6 +213,7 @@ class Character {
     std::swap(damage_scaling_, rhs.damage_scaling_);
     std::swap(character_level_, rhs.character_level_);
     std::swap(artifact_set_, rhs.artifact_set_);
+    std::swap(bonus_stat_gains_, rhs.bonus_stat_gains_);
 
     updateStatModel();
 
@@ -231,18 +243,35 @@ class Character {
     return damage_bonus_[label];
   }
 
+  const std::unordered_map<std::string, double>& finalStats() {
+    return final_stats_;
+  }
+
+  std::vector<Artifact> getArtifacts() {
+    return artifact_set_;
+  }
+
+  std::string& getTalentScalingStat(std::string talent) {
+    return scaling_stat_[talent];
+  }
+
+  double& getTalentScalingDMG(std::string talent) {
+    return damage_scaling_[talent];
+  }
+
+  const std::vector<Attributes::BonusStatGain>& getBonusStatGains() {
+    return bonus_stat_gains_;
+  }
+
   // modify base stats
   void setStat(std::string label, double value) {
     stats_[label] = value;
     updateStatModel();
   }
+
   void setDamageBonus(std::string label, double value) {
     damage_bonus_[label] = value;
     updateStatModel();
-  }
-
-  const std::unordered_map<std::string, double>& finalStats() {
-    return final_stats_;
   }
 
   void addArtifact(Artifact& artifact) {
@@ -280,21 +309,29 @@ class Character {
     updateStatModel();
   }
 
-  std::vector<Artifact> getArtifacts() {
-    return artifact_set_;
-  }
-
   void setTalentDetails(std::string talent, std::string scaling_stat, double scaling_percent) {
     scaling_stat_[talent] = scaling_stat;
     damage_scaling_[talent] = scaling_percent;
   }
 
-  std::string& getTalentScalingStat(std::string talent) {
-    return scaling_stat_[talent];
+  // stat gain bonus like hutao e and 4pc emblem
+  void addBonusStatGain(Attributes::BonusStatGain bonus) {
+    bonus_stat_gains_.push_back(bonus);
   }
 
-  double& getTalentScalingDMG(std::string talent) {
-    return damage_scaling_[talent];
+  void applyStatGains() {
+    for (const Attributes::BonusStatGain& bonus : bonus_stat_gains_) {
+      double sourceValue = getStat(bonus.source_stat_);
+      double bonusValue = std::min(bonus.max_gain_, (sourceValue - bonus.source_offset_) * bonus.percent_gain_);
+
+      std::string targetStat = bonus.target_stat_;
+      if (isDmgBonus(targetStat)) {
+        std::string damageBonusType = labelCastToElement(targetStat);
+        setDamageBonus(damageBonusType, damage_bonus_[damageBonusType] + bonusValue);
+      }
+    }
+
+    updateStatModel();
   }
 
   friend std::ostream& operator<<(std::ostream& out, Character& rhs) {
@@ -319,7 +356,6 @@ class Character {
 
     return out;
   }
-
   crow::json::wvalue toJSON() {
     crow::json::wvalue characterJson;
 

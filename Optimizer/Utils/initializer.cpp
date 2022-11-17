@@ -1,5 +1,5 @@
 #include "../../Katsudon/katsudon.h"
-#include "../Game/Character.h"
+#include "../Game/Character/Character.h"
 #include "../Game/Enemy.h"
 #include "./generate.h"
 

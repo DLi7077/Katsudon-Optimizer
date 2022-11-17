@@ -1,6 +1,6 @@
 #include "../Constants/constants.h"
 #include "../Constants/pch.h"
-#include "./Character.h"
+#include "./Character/Character.h"
 #include "./Enemy.h"
 
 struct DamageOutput {
@@ -79,11 +79,17 @@ double enemyElementResistance(Character& character, Enemy& enemy) {
 }
 
 double damageOutput(Character& character, Enemy& enemy) {
-  double baseDMG = baseDamage(character, BURST);
-  double multipliers = bonusMultipliers(character);
-  double DMGReducedPercent = 1 - damageReductionByDefense(character, enemy);
-  double resistanceMultiplier = enemyElementResistance(character, enemy);
-  double meltVapMultiplier = meltBonus(character, enemy);
+  // create copy character to apply stat gains
+  Character finalized = character;
+
+  // apply stat gains
+  finalized.applyStatGains();
+
+  double baseDMG = baseDamage(finalized, BURST);
+  double multipliers = bonusMultipliers(finalized);
+  double DMGReducedPercent = 1 - damageReductionByDefense(finalized, enemy);
+  double resistanceMultiplier = enemyElementResistance(finalized, enemy);
+  double meltVapMultiplier = meltBonus(finalized, enemy);
 
   return baseDMG *
          multipliers *
