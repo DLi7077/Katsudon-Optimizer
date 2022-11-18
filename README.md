@@ -66,8 +66,7 @@ Allow Visual Studio to use vcpkg
 | `"damage_bonus_elemental"` | Bonus Elemental Damage              | Bennet C6, Ganyu A4 , Ascension Bonus       |
 | `"damage_bonus_all"`       | Other Damage Bonus                  | Mona's Omen, Serpent Spine                  |
 
-<details>
-<summary><code> Tartaglia's DPS Ceiling</code></summary>
+#### Tartaglia's DPS Ceiling
 
 ```js
 // Represents Tartaglia's stats without any artifacts
@@ -84,8 +83,6 @@ Allow Visual Studio to use vcpkg
 };
 
 ```
-
-</details>
 
 <br>
 
@@ -109,9 +106,7 @@ Allow Visual Studio to use vcpkg
 | `"total_defense"`     | Total Defense     |
 | `"elemental_mastery"` | Elemental Mastery |
 
-<details>
-<summary><code> Tartaglia's talents</code></summary>
-
+#### Tartaglia's talents
 ```js
 {
   talent_stat: "total_attack", // Talent scales off total_attack
@@ -119,8 +114,6 @@ Allow Visual Studio to use vcpkg
   ...
 }
 ```
-
-</details>
 
 <br>
 
@@ -132,9 +125,8 @@ Allow Visual Studio to use vcpkg
 | `"affected_element"`             | The element that is on the enemy                      |
 | `"resistance_to_damage_element"` | The enemy's resistance to the incoming damage element |
 
-<details>
-<summary><code> Enemy's stats</code></summary>
 
+#### Enemy's stats
 ```js
 {
   element: "Hydro", // Tartaglia's damaging element from before
@@ -144,4 +136,3 @@ Allow Visual Studio to use vcpkg
   resistance_to_damage_element: -1.8 // Enemy has -1.8 resistance to Hydro (above)
 }
 ```
-</details>
