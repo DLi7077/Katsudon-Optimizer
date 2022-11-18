@@ -11,9 +11,28 @@ class Katsudon {
   crow::json::rvalue request_body_;
 
  public:
-  // construct from crow
+  // construct parser from crow
   Katsudon(crow::json::rvalue request_body) {
     request_body_ = request_body;
+  }
+
+  // construct bonus damage gains
+  std::vector<Attributes::BonusStatGain> constructBonusGain() {
+    std::vector<crow::json::rvalue> bonusGainJsons = vector_json("bonus_stat_gain");
+
+    std::vector<Attributes::BonusStatGain> bonusGains;
+    for (const crow::json::rvalue &bonusGainJsons : bonusGainJsons) {
+      std::string sourceStat = bonusGainJsons["source_stat"].s();
+      std::string targetStat = bonusGainJsons["target_stat"].s();
+      double sourceOffset = bonusGainJsons["source_offset"].d();
+      double percentGain = bonusGainJsons["percent_gain"].d();
+      double maxGain = bonusGainJsons["max_gain"].d();
+
+      Attributes::BonusStatGain bonusGain(sourceStat, targetStat, sourceOffset, percentGain, maxGain);
+      bonusGains.push_back(bonusGain);
+    }
+
+    return bonusGains;
   }
 
   // construct Character from request body
@@ -123,6 +142,21 @@ class Katsudon {
     std::vector<std::string> result;
     for (int i = 0; i < list_size; i++) {
       result.push_back(crowList.lo()[i].s());
+    }
+
+    return result;
+  }
+
+  // json list
+  std::vector<crow::json::rvalue> vector_json(std::string key) {
+    if (!hasKey(key)) return {};
+    
+    auto crowList = request_body_[key];
+    int list_size = crowList.lo().size();
+
+    std::vector<crow::json::rvalue> result;
+    for (int i = 0; i < list_size; i++) {
+      result.push_back(crowList.lo()[i]);
     }
 
     return result;
