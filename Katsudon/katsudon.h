@@ -38,10 +38,13 @@ class Katsudon {
   // construct Character from request body
   Character constructCharacter() {
     std::string element = getString("element");
-    double base_attack = getDouble("base_attack");              // 843
-    double crit_damage = getDouble("crit_damage");              // .882
-    double flat_attack = getDouble("flat_attack");              // 1491
-    double attack_percent = getDouble("attack_percent");        // 1.22
+    double base_attack = getDouble("base_attack");  // 843
+    double base_hp = getDouble("base_hp");
+    double crit_damage = getDouble("crit_damage");        // .882
+    double flat_attack = getDouble("flat_attack");        // 1491
+    double attack_percent = getDouble("attack_percent");  // 1.22
+    double flat_hp = getDouble("flat_hp");
+    double hp_percent = getDouble("hp_percent");
     double elemental_mastery = getDouble("elemental_mastery");  // 747
     double energy_recharge = getDouble("energy_recharge");      // 0
 
@@ -53,17 +56,22 @@ class Katsudon {
 
     Character character(element);
     character.setStat(BASE_ATK, base_attack);
+    character.setStat(BASE_HP, base_hp);
     character.setStat(CRIT_DAMAGE, DEFAULT_CRIT_DAMAGE + crit_damage);
 
     character.setStat(FLAT_ATK, flat_attack);
     character.setStat(ATK_PERCENT, attack_percent);
+    character.setStat(FLAT_HP, flat_hp);
+    character.setStat(HP_PERCENT, hp_percent);
     character.setStat(ELEMENTAL_MASTERY, elemental_mastery);
-    character.setStat(ENERGY_RECHARGE, energy_recharge);
+    character.setStat(ENERGY_RECHARGE, 1 + energy_recharge);
+
+    // todo: add to client
     character.setStat(MELT_BONUS, .15);
 
     character.setTalentDetails(BURST, talent_stat, talent_percent);
 
-    character.setDamageBonus(HYDRO, damage_bonus_elemental);
+    character.setDamageBonus(element, damage_bonus_elemental);
     character.setDamageBonus(ALL, damage_bonus_all);
 
     return character;
@@ -150,7 +158,7 @@ class Katsudon {
   // json list
   std::vector<crow::json::rvalue> vector_json(std::string key) {
     if (!hasKey(key)) return {};
-    
+
     auto crowList = request_body_[key];
     int list_size = crowList.lo().size();
 

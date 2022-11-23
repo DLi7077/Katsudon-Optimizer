@@ -322,12 +322,21 @@ class Character {
   void applyStatGains() {
     for (const Attributes::BonusStatGain& bonus : bonus_stat_gains_) {
       double sourceValue = getStat(bonus.source_stat_);
-      double bonusValue = std::min(bonus.max_gain_, (sourceValue - bonus.source_offset_) * bonus.percent_gain_);
+      double bonusValue = (sourceValue - bonus.source_offset_) * bonus.percent_gain_;
+
+      // limit only if max exists
+      if (bonus.max_gain_ != 0) {
+        bonusValue = std::min(bonus.max_gain_, (sourceValue - bonus.source_offset_) * bonus.percent_gain_);
+      }
 
       std::string targetStat = bonus.target_stat_;
+      targetStat = labelCastToElement(targetStat);
       if (isDmgBonus(targetStat)) {
-        std::string damageBonusType = labelCastToElement(targetStat);
-        setDamageBonus(damageBonusType, damage_bonus_[damageBonusType] + bonusValue);
+        setDamageBonus(targetStat, damage_bonus_[targetStat] + bonusValue);
+      }
+
+      else {
+        setStat(targetStat, stats_[targetStat] + bonusValue);
       }
     }
 
@@ -337,9 +346,13 @@ class Character {
   friend std::ostream& operator<<(std::ostream& out, Character& rhs) {
     out << "Character Level:\t" << rhs.character_level_ << "\n";
     out << "Base FLAT_ATK:\t\t" << rhs.stats_[BASE_ATK] << "\n";
-    out << "ATK\t\t\t" << rhs.final_stats_["total_attack"] << "\n";
+    out << "Final ATK\t\t\t" << rhs.final_stats_["total_attack"] << "\n";
+    out << "ATK %\t\t\t" << rhs.stats_[ATK_PERCENT] << "\n";
+    out << "FLAT ATK\t\t" << rhs.stats_[FLAT_ATK] << "\n";
     out << "MAX HP:\t\t\t" << rhs.final_stats_["total_hp"] << "\n";
-    out << "DEF:\t\t\t" << rhs.final_stats_["total_defense"] << "\n";
+    out << "HP %:\t\t\t" << rhs.stats_[HP_PERCENT] << "\n";
+    out << "FLAT HP:\t\t\t" << rhs.stats_[FLAT_HP] << "\n";
+    out << "DEF:\t\t\t" << rhs.stats_["total_defense"] << "\n";
     out << "Elemental Mastery:\t" << rhs.final_stats_["elemental_mastery"] << "\n";
     out << "Energy Recharge:\t" << rhs.final_stats_["energy_recharge"] * 100 << "%\n";
     out << "Crit Rate:\t\t" << rhs.final_stats_["crit_rate"] * 100 << "%\n";
@@ -352,13 +365,17 @@ class Character {
     out << "Pyro DMG Bonus: \t" << rhs.final_stats_["damage_bonus_pyro"] * 100 << "%\n";
     out << "Physical DMG Bonus:\t" << rhs.final_stats_["damage_bonus_physical"] * 100 << "%\n";
     out << "Other DMG Bonus:\t" << rhs.final_stats_["damage_bonus_all"] * 100 << "%\n";
+    out << "Melt Bonus:\t" << rhs.final_stats_[MELT_BONUS] << "%\n";
+    out << "Other DMG Bonus:\t" << rhs.final_stats_["damage_bonus_all"] * 100 << "%\n";
     out << std::string(30, '-') << "\n";
 
     return out;
   }
+
   crow::json::wvalue toJSON() {
     crow::json::wvalue characterJson;
 
+    updateStatModel();
     // character stats
     characterJson["Character Level"] = character_level_;
     characterJson["Base FLAT_ATK"] = stats_[BASE_ATK];
