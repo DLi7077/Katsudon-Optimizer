@@ -31,7 +31,7 @@ Character optimize(Character& character, Enemy& enemy) {
     return true;
   };
 
-  const size_t limit = 20;
+  const size_t limit = 30;
   std::vector<Character> population = {character};
   std::priority_queue<
       Character,

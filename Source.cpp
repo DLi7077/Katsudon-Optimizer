@@ -43,14 +43,31 @@ int main() {
     Katsudon payload(requestBody);
 
     Character character = payload.constructCharacter();
-    Attributes::BonusStatGain fourEmblem("energy_recharge", OTHER_DAMAGE_BONUS, 0, 0.25, 0.75);
-    character.addBonusStatGain(fourEmblem);
+    // Attributes::BonusStatGain fourEmblem("energy_recharge", OTHER_DAMAGE_BONUS, 0, 0.25, 0.75);
+    // character.addBonusStatGain(fourEmblem);
 
     Enemy enemy = payload.constructEnemy();
 
+    std::vector<Attributes::BonusStatGain> bonusStatGains = payload.constructBonusGain();
+
+    // add emblem /hutao talent bonuses
+    for (const Attributes::BonusStatGain& bonusBuff : bonusStatGains) {
+      character.addBonusStatGain(bonusBuff);
+    }
+
     Character best = Optimize::optimize(character, enemy);
-    responseBody = best.toJSON();
-    responseBody["damageOutput"] = Calculator::damageOutput(best, enemy);
+
+    responseBody["damage_output"] = Calculator::damageOutput(best, enemy);
+
+    // std::array<std::string, 4> start = {HP_PERCENT, CRIT_DAMAGE, CRIT_RATE, ELEMENTAL_MASTERY};
+    // Artifact x(start, FLAT_HP);
+    // std::cout<<x;
+
+    // best.addArtifact(x);
+
+    std::cout << "melt multiplier" << Calculator::meltBonus(best, enemy) << "\n";
+
+    responseBody["character_stats"] = best.toJSON();
 
     return responseBody;
   });
